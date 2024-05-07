@@ -11,7 +11,7 @@ admin.initializeApp({
 const db = admin.firestore();
 
 // Hàm gửi thông báo
-function sendNotificationToAllUsers(title, body, image) {
+function sendNotificationToAllUsers(title, body) {
   db.collection("user-tokens")
     .get()
     .then((querySnapshot) => {
@@ -25,7 +25,6 @@ function sendNotificationToAllUsers(title, body, image) {
           notification: {
             title: title,
             body: body,
-            image: image,
           },
           tokens: tokens,
         };
@@ -55,7 +54,6 @@ app.post("/send-notification", (req, res) => {
     .add({
       title: req.body.title,
       body: req.body.body,
-      image: req.body.image,
       created_at: new Date(),
       user_id: "all",
     })
@@ -78,7 +76,6 @@ function sendNotificationToUser(title, body, image, userId, db, admin, res) {
           notification: {
             title,
             body,
-            image,
           },
           token: doc.data().token,
         };
@@ -99,7 +96,7 @@ function sendNotificationToUser(title, body, image, userId, db, admin, res) {
           .add({
             title,
             body,
-            image,
+
             created_at: new Date(),
             user_id: userId,
           })
@@ -142,7 +139,6 @@ const checkActivities = async () => {
           sendNotificationToUser(
             "Hoạt động sẽ diễn ra vào ngày mai",
             activity.data().name,
-            activity.data().image,
             interestedActivity.data().user_id,
             db,
             admin,
